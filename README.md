@@ -17,6 +17,7 @@
 - cv2 >= 3.xx (Only if you want to use video input/output)
 - openpyxl
 - pandas
+- timm
 
 ## Code
 
