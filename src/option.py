@@ -9,7 +9,7 @@ parser.add_argument('--template', default='.',
                     help='You can set various templates in option.py')
 
 # Hardware specifications
-parser.add_argument('--n_threads', type=int, default=6,
+parser.add_argument('--n_threads', type=int, default=4,
                     help='number of threads for data loading')
 parser.add_argument('--cpu', action='store_true',
                     help='use cpu only')
@@ -19,7 +19,7 @@ parser.add_argument('--seed', type=int, default=1,
                     help='random seed')
 
 # Data specifications
-parser.add_argument('--dir_data', type=str, default='/home/linhanjiang/SRdataset/',
+parser.add_argument('--dir_data', type=str, default='D:\Deep\datasets\HNCT-Temp',
                     help='daptaset directory')
 parser.add_argument('--dir_demo', type=str, default='../test',
                     help='demo image directory')
@@ -151,6 +151,7 @@ parser.add_argument('--save_results', action='store_true',
 parser.add_argument('--save_gt', action='store_true',
                     help='save low-resolution and high-resolution images together')
 
+#为命名空间添加如上参数
 args = parser.parse_args()
 template.set_template(args)
 

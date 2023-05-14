@@ -190,6 +190,7 @@ class Trainer():
 
         return [_prepare(a) for a in args]
 
+    # 识别是否仅测试
     def terminate(self):
         if self.args.test_only:
             self.test()

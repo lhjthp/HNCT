@@ -116,6 +116,7 @@ class SRData(data.Dataset):
         else:
             return idx
 
+    # 载入图片文件或二进制张量
     def _load_file(self, idx):
         idx = self._get_index(idx)
         f_hr = self.images_hr[idx]

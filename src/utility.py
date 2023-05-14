@@ -41,35 +41,45 @@ class timer():
 
     def reset(self):
         self.acc = 0
-
+#传入构造一个对象
 class checkpoint():
     def __init__(self, args):
+        # 构造对象的参数
         self.args = args
         self.ok = True
         self.log = torch.Tensor()
         now = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
 
+        #如果不是 args 载入，还不是保存，为对象构造一个参数
         if not args.load:
             if not args.save:
                 args.save = now
+            # 当前对象添加路径，设定保存路径
             self.dir = os.path.join('..', 'experiment', args.save)
         else:
             self.dir = os.path.join('..', 'experiment', args.load)
+            # 如果有路径尝试获取日志
             if os.path.exists(self.dir):
+                # 获取 pt 日志
                 self.log = torch.load(self.get_path('psnr_log.pt'))
+                # 计算日志行数为 epoch 次数后打印
                 print('Continue from epoch {}...'.format(len(self.log)))
             else:
+                # Load 设定为空
                 args.load = ''
 
+        #  reset 参数，执行 Linux 删除操作
         if args.reset:
             os.system('rm -rf ' + self.dir)
             args.load = ''
-
+        
+        # 新建文件夹， model，遍历 data_test 测试数据集参数创建对应文件夹
         os.makedirs(self.dir, exist_ok=True)
         os.makedirs(self.get_path('model'), exist_ok=True)
         for d in args.data_test:
             os.makedirs(self.get_path('results-{}'.format(d)), exist_ok=True)
 
+        # 如果日志文件存在，打开日志文件，否则创建日志文件并打开；遍历参数，写入日志文件
         open_type = 'a' if os.path.exists(self.get_path('log.txt'))else 'w'
         self.log_file = open(self.get_path('log.txt'), open_type)
         with open(self.get_path('config.txt'), open_type) as f:
@@ -77,11 +87,15 @@ class checkpoint():
             for arg in vars(args):
                 f.write('{}: {}\n'.format(arg, getattr(args, arg)))
             f.write('\n')
+
+        # 构建参数，用于多线程
         self.n_processes = 8
 
+    # 获取子文件夹路径
     def get_path(self, *subdir):
         return os.path.join(self.dir, *subdir)
 
+    # 保存模型，损失，优化器，日志，图表
     def save(self, trainer, epoch, is_best=False):
         trainer.model.save(self.get_path('model'), epoch, is_best=is_best)
         trainer.loss.save(self.dir)
@@ -101,9 +115,11 @@ class checkpoint():
             self.log_file.close()
             self.log_file = open(self.get_path('log.txt'), 'a')
 
+    # 关闭日志
     def done(self):
         self.log_file.close()
 
+    # 输入 epoch，生成 PSNR 的 PDF 图表文件
     def plot_psnr(self, epoch):
         axis = np.linspace(1, epoch, epoch)
         for idx_data, d in enumerate(self.args.data_test):
@@ -123,28 +139,38 @@ class checkpoint():
             plt.savefig(self.get_path('test_{}.pdf'.format(d)))
             plt.close(fig)
 
+    # 启动后台进程
     def begin_background(self):
+        # 创建多处理器队列
+        # 使用刚才创建的队列对象
+        # 创建运行的列表，在单独进程中运行，for 循环定义进程数,target 调用对象，args 是参数
+        # 遍历，启动一个单独的进程
         self.queue = Queue()
 
+        # 进程函数
         def bg_target(queue):
             while True:
                 if not queue.empty():
+                    # 获取队列对象
                     filename, tensor = queue.get()
-                    if filename is None: break
+                    if filename is None:
+                        break
                     imageio.imwrite(filename, tensor.numpy())
         
         self.process = [
             Process(target=bg_target, args=(self.queue,)) \
             for _ in range(self.n_processes)
         ]
-        
-        for p in self.process: p.start()
+        for p in self.process:
+            p.start()
 
+    # 结束后台进程
     def end_background(self):
         for _ in range(self.n_processes): self.queue.put((None, None))
         while not self.queue.empty(): time.sleep(1)
         for p in self.process: p.join()
 
+    # 保存结果图片
     def save_results(self, dataset, filename, save_list, scale):
         if self.args.save_results:
             filename = self.get_path(
