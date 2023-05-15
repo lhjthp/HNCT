@@ -14,6 +14,7 @@ class MyConcatDataset(ConcatDataset):
         for d in self.datasets:
             if hasattr(d, 'set_scale'): d.set_scale(idx_scale)
 
+# 如果有参数，则导入相关的库
 class Data:
     def __init__(self, args):
         # 训练集的执行方式代码

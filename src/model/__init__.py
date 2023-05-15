@@ -22,7 +22,7 @@ class Model(nn.Module):
         self.n_GPUs = args.n_GPUs
         self.save_models = args.save_models
 
-        # 构造模型之间的通用方法以便调用
+        # 构造模型之间的通用方法以便调用。导入选项库，运行其中某个函数
         module = import_module('model.' + args.model.lower())
         self.model = module.make_model(args).to(self.device)
         if args.precision == 'half':
