@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from . import block as B
 def make_model(args, parent=False):
-    model = HNCT()
+    model = HNCT(upscale=args.scale[0])
     return model
 
 
@@ -26,7 +26,8 @@ class Cascade(nn.Module):
 
 
 class HNCT(nn.Module):
-    def __init__(self, in_nc=3, nf=50, num_modules=4, out_nc=3, upscale=4):
+    # 什么代码，为什么原来的 scale 是一个定值？
+    def __init__(self, in_nc=3, nf=50, num_modules=4, out_nc=3, upscale=3):
         super(HNCT, self).__init__()
 
         self.fea_conv = B.conv_layer(in_nc, nf, kernel_size=3)
