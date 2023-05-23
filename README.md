@@ -28,11 +28,12 @@ sh demo.sh
 
 You can find the result images from ```experiment/test/``` folder.
 
-| Model | Scale | File name (.pt) | Parameters | ****PSNR/SSIM** |
-|  ---  |  ---  | ---       | ---        | Set5 Set14 BSD100 Urban100 Manga109  |
+| Model | Scale | File name (.pt) | Parameters | **PSNR/SSIM**  (Set5 Set14 BSD100 Urban100 Manga109)|
+|  ---  |  ---  | ---       | ---        | ---  |
 |  ---  |  2  | x2.pt    | 356K       | 38.08/0.9608 33.65/0.9182 32.22/0.9001 32.22/0.9294 38.87/0.9774  |
 |  ---  |  3  | x3.pt    | 363K       | 34.47/0.9275 30.44/0.8439 29.15/0.8067 28.28/0.8557 33.81/0.9459  |
 |  ---  |  4  | x4.pt    | 372K       | 32.31/0.8957 28.71/0.7834 27.63/0.7381 26.20/0.7896 30.70/0.9112  |
+
 You can evaluate your models with widely-used benchmark datasets:
 
 ## How to test HNCT
